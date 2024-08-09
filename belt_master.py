@@ -8,6 +8,10 @@ pygame.mixer.init()
 
 pygame.display.set_caption("BELT MASTER")
 
+#get high_score
+with open('assets/HighScore/highscore.txt', 'r') as file:
+    HIGH_SCORE = int(file.read().strip())
+
 WIDTH, HEIGHT = 1200, 700
 FPS = 60
 
@@ -339,6 +343,10 @@ def show_title_screen(window, floor):
         clock.tick(60)  #limit to 60 FPS
     
 def show_game_over_screen(window, floor, score, high_score, font, offset_x):
+    #save high score
+    with open('assets/HighScore/highscore.txt', 'w') as file:
+        file.write(str(high_score))
+    #music
     pygame.mixer.music.stop() #stop music
     game_over = pygame.mixer.Sound('assets/Sounds/game_over.wav')
     game_over.play()
@@ -554,7 +562,7 @@ def main(window):
     door_num = 0
     score = 0
     end = False
-    high_score = 0
+    high_score = HIGH_SCORE
 
     #create floor
     floor = []
