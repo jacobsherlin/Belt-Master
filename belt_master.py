@@ -1,15 +1,25 @@
 import random
 import sys
 import pygame
+import os
 from os import listdir
 from os.path import isfile, join
 pygame.init()
 pygame.mixer.init()
 
+def resource_path(*relative_paths):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    
+    return os.path.join(base_path, *relative_paths)
+
+
 pygame.display.set_caption("BELT MASTER")
 
 #get high_score
-with open('assets/HighScore/highscore.txt', 'r') as file:
+with open(resource_path('assets/HighScore/highscore.txt'), 'r') as file:
     HIGH_SCORE = int(file.read().strip())
 
 WIDTH, HEIGHT = 1200, 700
@@ -23,7 +33,7 @@ def flip(sprites):
 
 #load sprite sheet
 def load_sprite_sheets(dir1, dir2, width, height, direction=False):
-    path = join('assets', dir1, dir2)
+    path = join(resource_path('assets', dir1, dir2))
     images = [f for f in listdir(path) if isfile(join(path, f))] #load every file inside of directory
 
     all_sprites = {}
@@ -52,9 +62,9 @@ def load_sprite_sheets(dir1, dir2, width, height, direction=False):
 
 def get_block(size, door_num = None):
     if door_num is not None:
-        path = join('assets', 'Doors', f'door{door_num}.png')
+        path = join(resource_path('assets', 'Doors', f'door{door_num}.png'))
     else:
-        path = join('assets', 'Terrain', 'floor.png')
+        path = join(resource_path('assets', 'Terrain', 'floor.png'))
     image = pygame.image.load(path).convert_alpha()
     image = pygame.transform.scale(image, (size, size))  #scale image to 96x96
     #create image
@@ -68,7 +78,7 @@ def get_block(size, door_num = None):
         return pygame.transform.scale2x(surface) #scaling makes it larger
 
 def get_box(size, sprite_file):
-    path = join('assets', 'Boxes', sprite_file)
+    path = join(resource_path('assets', 'Boxes', sprite_file))
     image = pygame.image.load(path).convert_alpha()
     #create image
     surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
@@ -307,9 +317,9 @@ def extract_number_from_filename(filename):
     return None
 
 def show_title_screen(window, floor):
-    title_image1 = pygame.image.load('assets/Background/title1.png').convert()
+    title_image1 = pygame.image.load(resource_path('assets/Background/title1.png')).convert()
     title_image1 = pygame.transform.scale(title_image1, (WIDTH, HEIGHT))
-    title_image2 = pygame.image.load('assets/Background/title2.png').convert()
+    title_image2 = pygame.image.load(resource_path('assets/Background/title2.png')).convert()
     title_image2 = pygame.transform.scale(title_image2, (WIDTH, HEIGHT))
 
     clock = pygame.time.Clock()
@@ -344,13 +354,13 @@ def show_title_screen(window, floor):
     
 def show_game_over_screen(window, floor, score, high_score, font, offset_x):
     #save high score
-    with open('assets/HighScore/highscore.txt', 'w') as file:
+    with open(resource_path('assets/HighScore/highscore.txt'), 'w') as file:
         file.write(str(high_score))
     #music
     pygame.mixer.music.stop() #stop music
-    game_over = pygame.mixer.Sound('assets/Sounds/game_over.wav')
+    game_over = pygame.mixer.Sound(resource_path('assets/Sounds/game_over.wav'))
     game_over.play()
-    gameover = pygame.image.load('assets/Background/gameover.png').convert()
+    gameover = pygame.image.load(resource_path('assets/Background/gameover.png')).convert()
     gameover = pygame.transform.scale(gameover, (WIDTH, HEIGHT))
     waiting = True
 
@@ -394,7 +404,7 @@ def show_game_over_screen(window, floor, score, high_score, font, offset_x):
 def gameplay(window, floor, block_size, door_num):
     clock = pygame.time.Clock()
     PLAYER_VEL = 5 #player speed
-    background = pygame.image.load('assets/Background/hub.png')
+    background = pygame.image.load(resource_path('assets/Background/hub.png'))
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 
     #player score
@@ -405,9 +415,9 @@ def gameplay(window, floor, block_size, door_num):
     box_number=0
 
     #sounds
-    scan = pygame.mixer.Sound('assets/Sounds/point.mp3')
-    error = pygame.mixer.Sound('assets/Sounds/error.mp3')
-    alarm = pygame.mixer.Sound('assets/Sounds/alarm.mp3')
+    scan = pygame.mixer.Sound(resource_path('assets/Sounds/point.mp3'))
+    error = pygame.mixer.Sound(resource_path('assets/Sounds/error.mp3'))
+    alarm = pygame.mixer.Sound(resource_path('assets/Sounds/alarm.mp3'))
 
 
     box_spawn_interval = 2500  #2500 milliseconds = 2.5 seconds
@@ -428,13 +438,13 @@ def gameplay(window, floor, block_size, door_num):
     scroll_max = max(0, len(floor) * block_size - WIDTH)
 
     #play title_screen music
-    pygame.mixer.music.load('assets/Music/title_screen.mp3')
+    pygame.mixer.music.load(resource_path('assets/Music/title_screen.mp3'))
     pygame.mixer.music.play(-1) #loop indefinitely
     pygame.mixer.music.set_volume(0.3)
 
     #play music
     pygame.mixer.music.stop() #stops music
-    pygame.mixer.music.load('assets/Music/music.mp3')
+    pygame.mixer.music.load(resource_path('assets/Music/music.mp3'))
     pygame.mixer.music.play(-1) #loop indefinitely
     pygame.mixer.music.set_volume(0.4)
     alarm.play(loops=1)
@@ -447,7 +457,7 @@ def gameplay(window, floor, block_size, door_num):
         
         current_time = pygame.time.get_ticks()
 
-        font = pygame.font.Font('assets/Font/Grand9K Pixel.ttf', 50) 
+        font = pygame.font.Font(resource_path('assets/Font/Grand9K Pixel.ttf'), 50) 
 
 
         #check score
@@ -577,7 +587,7 @@ def main(window):
 
     while not end:
         #play title_screen music
-        pygame.mixer.music.load('assets/Music/title_screen.mp3')
+        pygame.mixer.music.load(resource_path('assets/Music/title_screen.mp3'))
         pygame.mixer.music.play(-1) #loop indefinitely
         pygame.mixer.music.set_volume(0.3)
         #show title_screen
