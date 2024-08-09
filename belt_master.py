@@ -1,4 +1,5 @@
 import random
+import sys
 import pygame
 from os import listdir
 from os.path import isfile, join
@@ -330,7 +331,7 @@ def show_title_screen(window, floor):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     waiting = False
@@ -376,7 +377,8 @@ def show_game_over_screen(window, floor, score, high_score, font, offset_x):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                quit()
+                sys.exit()
+
             if event.type == pygame.KEYDOWN: #press any key
                     waiting = False
                     game_over.stop()
@@ -545,7 +547,7 @@ def gameplay(window, floor, block_size, door_num):
             offset_x = max(scroll_min, min(scroll_max, offset_x))
 
     pygame.quit()
-    quit()
+    sys.exit()
 
 def main(window):
     block_size = 96
@@ -581,9 +583,12 @@ def main(window):
             high_score = score
         show_game_over_screen(window, floor, score, high_score, font, offset_x)
         score = 0
-    
+
+
     pygame.quit()
-    quit()
+    sys.exit()
+
+import warnings
 
 if __name__ == '__main__':
     main(window)
